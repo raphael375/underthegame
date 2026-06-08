@@ -330,6 +330,7 @@ const U_GRID=[[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1
 const fluoColors=[['#00FF9F','#FF00FF'],['#FF72C6','#00FFFF'],['#FFFF00','#00BFFF'],['#FF4DFF','#00FF9F'],['#FF6600','#00FF00']];
 let colorIdx=0;
 function drawU(c1,c2){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,48,56);U_GRID.forEach((row,y)=>row.forEach((v,x)=>{if(!v)return;ctx.fillStyle=(x+y)%2===0?c1:c2;ctx.shadowColor=c1;ctx.shadowBlur=10;ctx.fillRect(x*8+4,y*8+2,7,7);}));ctx.shadowBlur=0;}
+canvas.style.left='-100px'; canvas.style.top='-100px';
 drawU(...fluoColors[0]);
 document.addEventListener('mousemove',e=>{canvas.style.left=e.clientX+'px';canvas.style.top=e.clientY+'px';});
 setInterval(()=>{colorIdx=(colorIdx+1)%fluoColors.length;drawU(...fluoColors[colorIdx]);},500);
