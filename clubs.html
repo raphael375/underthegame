@@ -261,94 +261,89 @@
   </ul>
   <div class="footer-copy">© 2025 Under The Game</div>
 </footer>
-
 <script>
 var CLUBS = [
-  { name: "Legé HBC", sport: "Handball", city: "Legé", emoji: "🤾", url: "club-lege-hbc.html" }
+  { name: "Lege HBC", sport: "Handball", city: "Lege", emoji: "🤾", url: "club-lege-hbc.html" }
 ];
 
-var input = document.getElementById('searchInput');
-var results = document.getElementById('searchResults');
+var searchInput = document.getElementById("searchInput");
+var searchResults = document.getElementById("searchResults");
 
-input.addEventListener('input', function() {
-  var q = input.value.toLowerCase().trim();
-  results.innerHTML = '';
-
-  if (q.length < 2) {
-    results.classList.remove('visible');
-    return;
-  }
-
+searchInput.addEventListener("input", function() {
+  var q = searchInput.value.toLowerCase().trim();
+  searchResults.innerHTML = "";
+  if (q.length < 2) { searchResults.classList.remove("visible"); return; }
   var matches = CLUBS.filter(function(c) {
-    return c.name.toLowerCase().indexOf(q) !== -1 ||
-           c.city.toLowerCase().indexOf(q) !== -1 ||
-           c.sport.toLowerCase().indexOf(q) !== -1;
+    return c.name.toLowerCase().indexOf(q) !== -1 || c.city.toLowerCase().indexOf(q) !== -1;
   });
-
   if (matches.length > 0) {
     matches.forEach(function(club) {
-      var a = document.createElement('a');
+      var a = document.createElement("a");
       a.href = club.url;
-      a.className = 'result-item';
-      a.innerHTML = '<div class="result-icon">' + club.emoji + '</div>' +
-        '<div><div class="result-name">' + club.name + '</div>' +
-        '<div class="result-sport">' + club.sport + ' · ' + club.city + '</div></div>' +
-        '<div class="result-arrow">→</div>';
-      results.appendChild(a);
+      a.className = "result-item";
+      a.innerHTML = "<div class=\"result-icon\">" + club.emoji + "</div><div><div class=\"result-name\">" + club.name + "</div><div class=\"result-sport\">" + club.sport + " - " + club.city + "</div></div><div class=\"result-arrow\">→</div>";
+      searchResults.appendChild(a);
     });
   } else {
-    var noResult = document.createElement('div');
-    noResult.className = 'no-result visible';
-    var mailto = 'mailto:raphael@wearewallace.online?subject=Mon club : ' + input.value;
-    noResult.innerHTML = '<p>Ce club n'est pas encore partenaire UTG.</p>' +
-      '<a href="' + mailto + '">Proposer ce club →</a>';
-    results.appendChild(noResult);
+    var d = document.createElement("div");
+    d.className = "no-result visible";
+    d.innerHTML = "<p>Ce club n'est pas encore partenaire UTG.</p><a href=\"mailto:raphael@wearewallace.online\">Proposer ce club</a>";
+    searchResults.appendChild(d);
   }
-
-  results.classList.add('visible');
+  searchResults.classList.add("visible");
 });
 
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.search-wrap')) {
-    results.classList.remove('visible');
-  }
+document.addEventListener("click", function(e) {
+  if (!e.target.closest(".search-wrap")) searchResults.classList.remove("visible");
 });
 
-// Cursor
-var canvas = document.getElementById('cursor-canvas');
-canvas.style.left = '-100px';
-canvas.style.top = '-100px';
-var U_GRID = [[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1,1,0],[0,0,1,0,0]];
-var fluoColors = [['#00FF9F','#FF00FF'],['#FF72C6','#00FFFF'],['#FFFF00','#00BFFF'],['#FF4DFF','#00FF9F'],['#FF6600','#00FF00']];
-var colorIdx = 0;
-function drawU(c1, c2) {
-  var ctx = canvas.getContext('2d');
+// CURSEUR U PIXELISE
+var cv = document.getElementById("cursor-canvas");
+cv.style.position = "fixed";
+cv.style.left = "-100px";
+cv.style.top = "-100px";
+cv.style.pointerEvents = "none";
+cv.style.zIndex = "99999";
+cv.style.imageRendering = "pixelated";
+cv.style.transform = "translate(-50%,-50%)";
+
+var UGRID = [[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1,1,0],[0,0,1,0,0]];
+var COLORS = [["#00FF9F","#FF00FF"],["#FF72C6","#00FFFF"],["#FFFF00","#00BFFF"],["#FF4DFF","#00FF9F"],["#FF6600","#00FF00"]];
+var ci = 0;
+
+function drawCursor(c1, c2) {
+  var ctx = cv.getContext("2d");
   ctx.clearRect(0, 0, 48, 56);
-  U_GRID.forEach(function(row, y) {
-    row.forEach(function(v, x) {
-      if (!v) return;
+  for (var y = 0; y < UGRID.length; y++) {
+    for (var x = 0; x < UGRID[y].length; x++) {
+      if (!UGRID[y][x]) continue;
       ctx.fillStyle = (x + y) % 2 === 0 ? c1 : c2;
       ctx.shadowColor = c1;
       ctx.shadowBlur = 10;
       ctx.fillRect(x * 8 + 4, y * 8 + 2, 7, 7);
-    });
-  });
+    }
+  }
   ctx.shadowBlur = 0;
 }
-drawU(fluoColors[0][0], fluoColors[0][1]);
-document.addEventListener('mousemove', function(e) {
-  canvas.style.left = e.clientX + 'px';
-  canvas.style.top = e.clientY + 'px';
+
+drawCursor(COLORS[0][0], COLORS[0][1]);
+
+document.addEventListener("mousemove", function(e) {
+  cv.style.left = e.clientX + "px";
+  cv.style.top = e.clientY + "px";
 });
+
 setInterval(function() {
-  colorIdx = (colorIdx + 1) % fluoColors.length;
-  drawU(fluoColors[colorIdx][0], fluoColors[colorIdx][1]);
+  ci = (ci + 1) % COLORS.length;
+  drawCursor(COLORS[ci][0], COLORS[ci][1]);
 }, 500);
-document.addEventListener('mousedown', function() { canvas.style.transform = 'translate(-50%,-50%) scale(0.75)'; });
-document.addEventListener('mouseup', function() { canvas.style.transform = 'translate(-50%,-50%) scale(1)'; });
-document.querySelectorAll('a,button,input').forEach(function(el) {
-  el.addEventListener('mouseenter', function() { drawU('#FFFFFF', '#00FF9F'); });
-  el.addEventListener('mouseleave', function() { drawU(fluoColors[colorIdx][0], fluoColors[colorIdx][1]); });
+
+document.addEventListener("mousedown", function() { cv.style.transform = "translate(-50%,-50%) scale(0.75)"; });
+document.addEventListener("mouseup", function() { cv.style.transform = "translate(-50%,-50%) scale(1)"; });
+
+document.querySelectorAll("a, button, input").forEach(function(el) {
+  el.addEventListener("mouseenter", function() { drawCursor("#FFFFFF", "#00FF9F"); });
+  el.addEventListener("mouseleave", function() { drawCursor(COLORS[ci][0], COLORS[ci][1]); });
 });
 </script>
 </body>
