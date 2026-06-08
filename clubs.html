@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clubs — Under The Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  :root { --green:#00D99A; --pink:#FF72C6; --navy:#0A0F23; --blue:#143AFF; }
+  body { background:var(--navy); font-family:'Inter',sans-serif; cursor:none; overflow-x:hidden; color:white; }
+  * { cursor:none !important; }
+  #cursor-canvas { position:fixed; pointer-events:none; z-index:99999; image-rendering:pixelated; transform:translate(-50%,-50%); }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:500; display:flex; align-items:center; padding:24px 48px; background:rgba(10,15,35,0.88); backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,255,255,0.05); }
+  .nav-links { display:flex; align-items:center; gap:44px; list-style:none; position:absolute; left:50%; transform:translateX(-50%); }
+  .nav-links a { color:rgba(255,255,255,0.75); text-decoration:none; font-size:12.5px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; position:relative; transition:color 0.2s; }
+  .nav-links a::after { content:''; position:absolute; bottom:-5px; left:0; width:0; height:2px; background:var(--green); transition:width 0.25s; }
+  .nav-links a:hover, .nav-links a.active { color:#fff; }
+  .nav-links a:hover::after, .nav-links a.active::after { width:100%; }
+  .nav-icons { display:flex; align-items:center; gap:20px; margin-left:auto; }
+  .nav-icons a { color:rgba(255,255,255,0.75); text-decoration:none; transition:color 0.2s,transform 0.2s; display:flex; align-items:center; }
+  .nav-icons a:hover { color:white; transform:scale(1.15); }
+  .nav-icons svg { width:20px; height:20px; }
+  .social-sep { width:1px; height:18px; background:rgba(255,255,255,0.2); margin:0 4px; }
+
+  /* HERO */
+  .clubs-hero {
+    padding: 160px 48px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .clubs-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center top, rgba(20,58,255,0.15) 0%, transparent 60%);
+  }
+  .clubs-label { font-size:10px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:var(--green); margin-bottom:16px; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .clubs-label::before, .clubs-label::after { content:''; width:32px; height:2px; background:var(--green); }
+  .clubs-title { font-size:clamp(48px,6vw,80px); font-weight:800; font-style:italic; letter-spacing:-0.03em; text-transform:uppercase; line-height:0.95; margin-bottom:20px; position:relative; }
+  .clubs-title em { color:var(--green); font-style:normal; }
+  .clubs-sub { font-size:16px; color:rgba(255,255,255,0.45); margin-bottom:56px; font-weight:300; }
+
+  /* SEARCH */
+  .search-wrap {
+    max-width: 600px;
+    margin: 0 auto 80px;
+    position: relative;
+  }
+  .search-input {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 20px 64px 20px 24px;
+    color: white;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.25s;
+  }
+  .search-input:focus { border-color: var(--green); background: rgba(0,217,154,0.05); }
+  .search-input::placeholder { color: rgba(255,255,255,0.25); }
+  .search-icon {
+    position: absolute;
+    right: 20px; top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,0.3);
+    font-size: 20px;
+    pointer-events: none;
+  }
+
+  /* RÉSULTATS */
+  .search-results {
+    max-width: 600px;
+    margin: -60px auto 0;
+    background: #0e1628;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    display: none;
+    position: relative;
+    z-index: 10;
+  }
+  .search-results.visible { display: block; }
+  .result-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    text-decoration: none;
+    color: white;
+    transition: background 0.2s;
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-item:hover { background: rgba(0,217,154,0.08); }
+  .result-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(20,58,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .result-name { font-size: 15px; font-weight: 600; }
+  .result-sport { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; }
+  .result-arrow { margin-left: auto; color: var(--green); font-size: 18px; }
+
+  /* NO RESULT */
+  .no-result {
+    padding: 28px 20px;
+    text-align: center;
+    display: none;
+  }
+  .no-result.visible { display: block; }
+  .no-result p { font-size: 14px; color: rgba(255,255,255,0.4); margin-bottom: 16px; }
+  .no-result a {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--pink); color: white;
+    padding: 12px 24px; border-radius: 4px;
+    font-weight: 700; font-size: 12px; letter-spacing: 0.12em;
+    text-transform: uppercase; text-decoration: none;
+    transition: all 0.2s;
+  }
+  .no-result a:hover { background: white; color: var(--navy); }
+
+  /* CLUBS EN VEDETTE */
+  .featured-clubs { padding: 0 48px 100px; }
+  .section-label { font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--green); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+  .section-label::before { content:''; width:20px; height:2px; background:var(--green); }
+  .section-title { font-size:clamp(28px,3vw,40px); font-weight:800; font-style:italic; text-transform:uppercase; letter-spacing:-0.02em; margin-bottom:40px; }
+
+  .clubs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .club-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 32px;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .club-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); }
+  .club-card-active { border-color: rgba(20,58,255,0.4); background: rgba(20,58,255,0.08); }
+  .club-card-active:hover { border-color: rgba(20,58,255,0.6); }
+  .club-sport-badge { font-size:9px; font-weight:800; letter-spacing:0.15em; text-transform:uppercase; padding:4px 10px; border-radius:100px; background:rgba(20,58,255,0.2); color:#6b8fff; width:fit-content; }
+  .club-name-big { font-size:22px; font-weight:800; font-style:italic; text-transform:uppercase; letter-spacing:-0.01em; }
+  .club-city { font-size:12px; color:rgba(255,255,255,0.35); }
+  .club-products { font-size:11px; color:var(--green); font-weight:600; margin-top:4px; }
+  .club-coming { position:absolute; top:16px; right:16px; font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:4px 8px; border-radius:2px; background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.3); }
+  .club-active-badge { position:absolute; top:16px; right:16px; font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:4px 8px; border-radius:2px; background:var(--green); color:var(--navy); }
+
+  /* CTA JOIN */
+  .join-cta {
+    margin: 0 48px 80px;
+    padding: 48px 56px;
+    background: linear-gradient(90deg, rgba(255,114,198,0.1), rgba(20,58,255,0.08));
+    border: 1px solid rgba(255,114,198,0.25);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: space-between; gap: 32px;
+  }
+  .join-cta h3 { font-size:22px; font-weight:800; font-style:italic; text-transform:uppercase; margin-bottom:8px; }
+  .join-cta p { font-size:14px; color:rgba(255,255,255,0.45); max-width:440px; line-height:1.6; }
+  .btn-pink { display:inline-flex; align-items:center; gap:10px; background:var(--pink); color:white; padding:16px 32px; border-radius:3px; font-weight:700; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; text-decoration:none; border:2px solid var(--pink); transition:all 0.2s; white-space:nowrap; }
+  .btn-pink:hover { background:transparent; color:var(--pink); }
+
+  footer { background:#000; border-top:1px solid rgba(255,255,255,0.06); padding:40px 48px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:24px; }
+  .footer-links { display:flex; gap:32px; list-style:none; }
+  .footer-links a { font-size:13px; color:rgba(255,255,255,0.35); text-decoration:none; transition:color 0.2s; font-weight:500; letter-spacing:0.06em; text-transform:uppercase; }
+  .footer-links a:hover { color:white; }
+  .footer-copy { font-size:12px; color:rgba(255,255,255,0.18); }
+</style>
+</head>
+<body>
+<canvas id="cursor-canvas" width="48" height="56"></canvas>
+
+<nav>
+  <ul class="nav-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="homme.html">Homme</a></li>
+    <li><a href="femme.html">Femme</a></li>
+    <li><a href="clubs.html" class="active">Clubs</a></li>
+    <li><a href="univers.html">Notre Histoire</a></li>
+  </ul>
+  <div class="nav-icons">
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg></a>
+    <div class="social-sep"></div>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg></a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></a>
+  </div>
+</nav>
+
+<!-- HERO + SEARCH -->
+<div class="clubs-hero">
+  <div class="clubs-label">Collabs Club</div>
+  <h1 class="clubs-title">Trouve ton <em>club</em></h1>
+  <p class="clubs-sub">Ton club a sa collection UTG. Commande ta pièce aux couleurs de ton équipe.</p>
+
+  <div class="search-wrap">
+    <input type="text" class="search-input" id="searchInput" placeholder="Tape le nom de ton club..." autocomplete="off">
+    <div class="search-icon">🔍</div>
+    <div class="search-results" id="searchResults">
+      <!-- Rempli par JS -->
+    </div>
+  </div>
+</div>
+
+<!-- CLUBS EN VEDETTE -->
+<div class="featured-clubs">
+  <div class="section-label">Clubs partenaires</div>
+  <div class="section-title">Collections disponibles</div>
+  <div class="clubs-grid">
+    <a href="club-lege-hbc.html" class="club-card club-card-active">
+      <span class="club-active-badge">Disponible</span>
+      <div class="club-sport-badge">🤾 Handball</div>
+      <div class="club-name-big">Legé HBC</div>
+      <div class="club-city">Legé · Loire-Atlantique</div>
+      <div class="club-products">2 produits disponibles · Sweat + Casquette</div>
+    </a>
+    <div class="club-card" style="opacity:0.5">
+      <span class="club-coming">Bientôt</span>
+      <div class="club-sport-badge">⚽ Football</div>
+      <div class="club-name-big">Votre Club</div>
+      <div class="club-city">Votre ville</div>
+      <div class="club-products">Collection en cours...</div>
+    </div>
+    <div class="club-card" style="opacity:0.5">
+      <span class="club-coming">Bientôt</span>
+      <div class="club-sport-badge">🏀 Basketball</div>
+      <div class="club-name-big">Votre Club</div>
+      <div class="club-city">Votre ville</div>
+      <div class="club-products">Collection en cours...</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA JOIN -->
+<div class="join-cta">
+  <div>
+    <h3>Votre club n'est pas là ?</h3>
+    <p>Contactez-nous — on crée votre collection en quelques jours. Sans frais, sans engagement. Votre club gagne à chaque vente.</p>
+  </div>
+  <a href="mailto:raphael@wearewallace.online?subject=Demande collab club UTG" class="btn-pink">Proposer mon club →</a>
+</div>
+
+<footer>
+  <ul class="footer-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="homme.html">Homme</a></li>
+    <li><a href="femme.html">Femme</a></li>
+    <li><a href="univers.html">Notre Histoire</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 Under The Game</div>
+</footer>
+
+<script>
+// Base de données clubs
+const CLUBS = [
+  { name: "Legé HBC", sport: "Handball", city: "Legé", emoji: "🤾", url: "club-lege-hbc.html" },
+];
+
+const input = document.getElementById('searchInput');
+const results = document.getElementById('searchResults');
+
+input.addEventListener('input', () => {
+  const q = input.value.toLowerCase().trim();
+  results.innerHTML = '';
+
+  if (q.length < 2) {
+    results.classList.remove('visible');
+    return;
+  }
+
+  const matches = CLUBS.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.city.toLowerCase().includes(q) ||
+    c.sport.toLowerCase().includes(q)
+  );
+
+  if (matches.length > 0) {
+    matches.forEach(club => {
+      const div = document.createElement('a');
+      div.href = club.url;
+      div.className = 'result-item';
+      div.innerHTML = \`
+        <div class="result-icon">\${club.emoji}</div>
+        <div>
+          <div class="result-name">\${club.name}</div>
+          <div class="result-sport">\${club.sport} · \${club.city}</div>
+        </div>
+        <div class="result-arrow">→</div>
+      \`;
+      results.appendChild(div);
+    });
+    // Supprimer no-result s'il existe
+    const nr = results.querySelector('.no-result');
+    if (nr) nr.remove();
+  } else {
+    const noResult = document.createElement('div');
+    noResult.className = 'no-result visible';
+    noResult.innerHTML = \`
+      <p>Ce club n'est pas encore partenaire UTG.</p>
+      <a href="mailto:raphael@wearewallace.online?subject=Mon club : \${input.value}&body=Bonjour, je voudrais que mon club \${input.value} rejoigne Under The Game.">Proposer ce club →</a>
+    \`;
+    results.appendChild(noResult);
+  }
+
+  results.classList.add('visible');
+});
+
+// Fermer si clic extérieur
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) {
+    results.classList.remove('visible');
+  }
+});
+
+// Cursor
+const canvas=document.getElementById('cursor-canvas');
+const U_GRID=[[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1,1,0],[0,0,1,0,0]];
+const fluoColors=[['#00FF9F','#FF00FF'],['#FF72C6','#00FFFF'],['#FFFF00','#00BFFF'],['#FF4DFF','#00FF9F'],['#FF6600','#00FF00']];
+let colorIdx=0;
+function drawU(c1,c2){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,48,56);U_GRID.forEach((row,y)=>row.forEach((v,x)=>{if(!v)return;ctx.fillStyle=(x+y)%2===0?c1:c2;ctx.shadowColor=c1;ctx.shadowBlur=10;ctx.fillRect(x*8+4,y*8+2,7,7);}));ctx.shadowBlur=0;}
+drawU(...fluoColors[0]);
+document.addEventListener('mousemove',e=>{canvas.style.left=e.clientX+'px';canvas.style.top=e.clientY+'px';});
+setInterval(()=>{colorIdx=(colorIdx+1)%fluoColors.length;drawU(...fluoColors[colorIdx]);},500);
+document.addEventListener('mousedown',()=>{canvas.style.transform='translate(-50%,-50%) scale(0.75)';});
+document.addEventListener('mouseup',()=>{canvas.style.transform='translate(-50%,-50%) scale(1)';});
+document.querySelectorAll('a,button,input').forEach(el=>{
+  el.addEventListener('mouseenter',()=>drawU('#FFFFFF','#00FF9F'));
+  el.addEventListener('mouseleave',()=>drawU(...fluoColors[colorIdx]));
+});
+</script>
+</body>
+</html>
