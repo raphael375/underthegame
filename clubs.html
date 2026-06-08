@@ -263,16 +263,15 @@
 </footer>
 
 <script>
-// Base de données clubs
-const CLUBS = [
-  { name: "Legé HBC", sport: "Handball", city: "Legé", emoji: "🤾", url: "club-lege-hbc.html" },
+var CLUBS = [
+  { name: "Legé HBC", sport: "Handball", city: "Legé", emoji: "🤾", url: "club-lege-hbc.html" }
 ];
 
-const input = document.getElementById('searchInput');
-const results = document.getElementById('searchResults');
+var input = document.getElementById('searchInput');
+var results = document.getElementById('searchResults');
 
-input.addEventListener('input', () => {
-  const q = input.value.toLowerCase().trim();
+input.addEventListener('input', function() {
+  var q = input.value.toLowerCase().trim();
   results.innerHTML = '';
 
   if (q.length < 2) {
@@ -280,65 +279,76 @@ input.addEventListener('input', () => {
     return;
   }
 
-  const matches = CLUBS.filter(c =>
-    c.name.toLowerCase().includes(q) ||
-    c.city.toLowerCase().includes(q) ||
-    c.sport.toLowerCase().includes(q)
-  );
+  var matches = CLUBS.filter(function(c) {
+    return c.name.toLowerCase().indexOf(q) !== -1 ||
+           c.city.toLowerCase().indexOf(q) !== -1 ||
+           c.sport.toLowerCase().indexOf(q) !== -1;
+  });
 
   if (matches.length > 0) {
-    matches.forEach(club => {
-      const div = document.createElement('a');
-      div.href = club.url;
-      div.className = 'result-item';
-      div.innerHTML = \`
-        <div class="result-icon">\${club.emoji}</div>
-        <div>
-          <div class="result-name">\${club.name}</div>
-          <div class="result-sport">\${club.sport} · \${club.city}</div>
-        </div>
-        <div class="result-arrow">→</div>
-      \`;
-      results.appendChild(div);
+    matches.forEach(function(club) {
+      var a = document.createElement('a');
+      a.href = club.url;
+      a.className = 'result-item';
+      a.innerHTML = '<div class="result-icon">' + club.emoji + '</div>' +
+        '<div><div class="result-name">' + club.name + '</div>' +
+        '<div class="result-sport">' + club.sport + ' · ' + club.city + '</div></div>' +
+        '<div class="result-arrow">→</div>';
+      results.appendChild(a);
     });
-    // Supprimer no-result s'il existe
-    const nr = results.querySelector('.no-result');
-    if (nr) nr.remove();
   } else {
-    const noResult = document.createElement('div');
+    var noResult = document.createElement('div');
     noResult.className = 'no-result visible';
-    noResult.innerHTML = \`
-      <p>Ce club n'est pas encore partenaire UTG.</p>
-      <a href="mailto:raphael@wearewallace.online?subject=Mon club : \${input.value}&body=Bonjour, je voudrais que mon club \${input.value} rejoigne Under The Game.">Proposer ce club →</a>
-    \`;
+    var mailto = 'mailto:raphael@wearewallace.online?subject=Mon club : ' + input.value;
+    noResult.innerHTML = '<p>Ce club n'est pas encore partenaire UTG.</p>' +
+      '<a href="' + mailto + '">Proposer ce club →</a>';
     results.appendChild(noResult);
   }
 
   results.classList.add('visible');
 });
 
-// Fermer si clic extérieur
-document.addEventListener('click', e => {
+document.addEventListener('click', function(e) {
   if (!e.target.closest('.search-wrap')) {
     results.classList.remove('visible');
   }
 });
 
 // Cursor
-const canvas=document.getElementById('cursor-canvas');
-const U_GRID=[[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1,1,0],[0,0,1,0,0]];
-const fluoColors=[['#00FF9F','#FF00FF'],['#FF72C6','#00FFFF'],['#FFFF00','#00BFFF'],['#FF4DFF','#00FF9F'],['#FF6600','#00FF00']];
-let colorIdx=0;
-function drawU(c1,c2){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,48,56);U_GRID.forEach((row,y)=>row.forEach((v,x)=>{if(!v)return;ctx.fillStyle=(x+y)%2===0?c1:c2;ctx.shadowColor=c1;ctx.shadowBlur=10;ctx.fillRect(x*8+4,y*8+2,7,7);}));ctx.shadowBlur=0;}
-canvas.style.left='-100px'; canvas.style.top='-100px';
-drawU(...fluoColors[0]);
-document.addEventListener('mousemove',e=>{canvas.style.left=e.clientX+'px';canvas.style.top=e.clientY+'px';});
-setInterval(()=>{colorIdx=(colorIdx+1)%fluoColors.length;drawU(...fluoColors[colorIdx]);},500);
-document.addEventListener('mousedown',()=>{canvas.style.transform='translate(-50%,-50%) scale(0.75)';});
-document.addEventListener('mouseup',()=>{canvas.style.transform='translate(-50%,-50%) scale(1)';});
-document.querySelectorAll('a,button,input').forEach(el=>{
-  el.addEventListener('mouseenter',()=>drawU('#FFFFFF','#00FF9F'));
-  el.addEventListener('mouseleave',()=>drawU(...fluoColors[colorIdx]));
+var canvas = document.getElementById('cursor-canvas');
+canvas.style.left = '-100px';
+canvas.style.top = '-100px';
+var U_GRID = [[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1,1,0],[0,0,1,0,0]];
+var fluoColors = [['#00FF9F','#FF00FF'],['#FF72C6','#00FFFF'],['#FFFF00','#00BFFF'],['#FF4DFF','#00FF9F'],['#FF6600','#00FF00']];
+var colorIdx = 0;
+function drawU(c1, c2) {
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 48, 56);
+  U_GRID.forEach(function(row, y) {
+    row.forEach(function(v, x) {
+      if (!v) return;
+      ctx.fillStyle = (x + y) % 2 === 0 ? c1 : c2;
+      ctx.shadowColor = c1;
+      ctx.shadowBlur = 10;
+      ctx.fillRect(x * 8 + 4, y * 8 + 2, 7, 7);
+    });
+  });
+  ctx.shadowBlur = 0;
+}
+drawU(fluoColors[0][0], fluoColors[0][1]);
+document.addEventListener('mousemove', function(e) {
+  canvas.style.left = e.clientX + 'px';
+  canvas.style.top = e.clientY + 'px';
+});
+setInterval(function() {
+  colorIdx = (colorIdx + 1) % fluoColors.length;
+  drawU(fluoColors[colorIdx][0], fluoColors[colorIdx][1]);
+}, 500);
+document.addEventListener('mousedown', function() { canvas.style.transform = 'translate(-50%,-50%) scale(0.75)'; });
+document.addEventListener('mouseup', function() { canvas.style.transform = 'translate(-50%,-50%) scale(1)'; });
+document.querySelectorAll('a,button,input').forEach(function(el) {
+  el.addEventListener('mouseenter', function() { drawU('#FFFFFF', '#00FF9F'); });
+  el.addEventListener('mouseleave', function() { drawU(fluoColors[colorIdx][0], fluoColors[colorIdx][1]); });
 });
 </script>
 </body>
