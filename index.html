@@ -199,6 +199,24 @@
 </head>
 <body>
 
+<canvas id="cur" width="48" height="56" style="position:fixed;pointer-events:none;z-index:99999;image-rendering:pixelated;transform:translate(-50%,-50%);left:-100px;top:-100px;"></canvas>
+<script>
+(function(){
+var cv=document.getElementById("cur");
+var ctx=cv.getContext("2d");
+var G=[[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1,1,0],[0,0,1,0,0]];
+var C=[["#00FF9F","#FF00FF"],["#FF72C6","#00FFFF"],["#FFFF00","#00BFFF"],["#FF4DFF","#00FF9F"],["#FF6600","#00FF00"]];
+var ci=0;
+function draw(a,b){ctx.clearRect(0,0,48,56);for(var y=0;y<7;y++){for(var x=0;x<5;x++){if(!G[y][x])continue;ctx.fillStyle=(x+y)%2===0?a:b;ctx.shadowColor=a;ctx.shadowBlur=8;ctx.fillRect(x*8+4,y*8+2,7,7);}}ctx.shadowBlur=0;}
+draw(C[0][0],C[0][1]);
+document.addEventListener("mousemove",function(e){cv.style.left=e.clientX+"px";cv.style.top=e.clientY+"px";});
+setInterval(function(){ci=(ci+1)%5;draw(C[ci][0],C[ci][1]);},500);
+document.addEventListener("mousedown",function(){cv.style.transform="translate(-50%,-50%) scale(0.75)";});
+document.addEventListener("mouseup",function(){cv.style.transform="translate(-50%,-50%) scale(1)";});
+document.querySelectorAll("a,button,input,select").forEach(function(el){el.addEventListener("mouseenter",function(){draw("#fff","#00FF9F");});el.addEventListener("mouseleave",function(){draw(C[ci][0],C[ci][1]);});});
+})();
+</script>
+
 <div class="notify-modal" id="notify-modal">
   <div class="notify-box">
     <h3>Bientôt — <em id="modal-name"></em></h3>
@@ -210,7 +228,7 @@
     <a class="notify-close" id="notify-close">Fermer</a>
   </div>
 </div>
-<canvas id="cursor-canvas" width="48" height="56"></canvas>
+
 
 <!-- HERO -->
 <section class="hero">
@@ -350,84 +368,21 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-top">
-    <div>
-      <div class="footer-tagline">Vêtements de sport pour les clubs, les équipes et les athlètes qui jouent à leur façon.</div>
-      <div class="footer-socials">
-        <a href="#" class="footer-social-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
-        <a href="#" class="footer-social-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg></a>
-      </div>
-    </div>
-    <div>
-      <div class="footer-col-title">Boutique</div>
-      <ul class="footer-links">
-        <li><a href="#">Homme</a></li>
-        <li><a href="#">Femme</a></li>
-        <li><a href="#">Accessoires</a></li>
-        <li><a href="#">Collabs Club</a></li>
-        <li><a href="#">Nouveautés</a></li>
-      </ul>
-    </div>
-    <div>
-      <div class="footer-col-title">Univers</div>
-      <ul class="footer-links">
-        <li><a href="#">Notre histoire</a></li>
-        <li><a href="#">Les clubs</a></li>
-        <li><a href="#">Le film</a></li>
-        <li><a href="#">Blog</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-    </div>
-    <div>
-      <div class="footer-col-title">Newsletter</div>
-      <p style="font-size:13px;color:rgba(255,255,255,0.38);line-height:1.6;margin-bottom:16px;">Les nouveautés, les collabs, les drops. Avant tout le monde.</p>
-      <div class="footer-newsletter">
-        <input type="email" placeholder="ton@email.com">
-        <button>OK</button>
-      </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <div class="footer-copy">© 2025 Under The Game. Tous droits réservés.</div>
-    <ul class="footer-legal">
-      <li><a href="#">Mentions légales</a></li>
-      <li><a href="#">CGV</a></li>
-      <li><a href="#">Confidentialité</a></li>
-    </ul>
-    <div class="footer-made">Fait avec <span>♥</span> pour le sport</div>
-  </div>
+  <ul class="footer-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="homme.html">Homme</a></li>
+    <li><a href="femme.html">Femme</a></li>
+    <li><a href="clubs.html">Clubs</a></li>
+    <li><a href="univers.html">Notre Histoire</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 Under The Game</div>
+  <ul class="footer-legal">
+    <li><a href="#">Mentions légales</a></li>
+    <li><a href="#">CGV</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
 </footer>
 
-<script>
-const canvas = document.getElementById('cursor-canvas');
-const U_GRID=[[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1,1,0],[0,0,1,0,0]];
-const fluoColors=[['#00FF9F','#FF00FF'],['#FF72C6','#00FFFF'],['#FFFF00','#00BFFF'],['#FF4DFF','#00FF9F'],['#FF6600','#00FF00']];
-let colorIdx=0;
-function drawU(c1,c2){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,48,56);U_GRID.forEach((row,y)=>row.forEach((v,x)=>{if(!v)return;ctx.fillStyle=(x+y)%2===0?c1:c2;ctx.shadowColor=c1;ctx.shadowBlur=10;ctx.fillRect(x*8+4,y*8+2,7,7);}));ctx.shadowBlur=0;}
-drawU(...fluoColors[0]);
-document.addEventListener('mousemove',e=>{canvas.style.left=e.clientX+'px';canvas.style.top=e.clientY+'px';});
-setInterval(()=>{colorIdx=(colorIdx+1)%fluoColors.length;drawU(...fluoColors[colorIdx]);},500);
-document.addEventListener('mousedown',()=>{canvas.style.transform='translate(-50%,-50%) scale(0.75)';});
-document.addEventListener('mouseup',()=>{canvas.style.transform='translate(-50%,-50%) scale(1)';});
-document.querySelectorAll('a,button').forEach(el=>{
-  el.addEventListener('mouseenter',()=>drawU('#FFFFFF','#00FF9F'));
-  el.addEventListener('mouseleave',()=>drawU(...fluoColors[colorIdx]));
-});
 
-// Notify modal
-document.querySelectorAll('[data-notify]').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.getElementById('modal-name').textContent=btn.dataset.notify;
-    document.getElementById('notify-modal').classList.add('open');
-  });
-});
-document.getElementById('notify-close').addEventListener('click',()=>{
-  document.getElementById('notify-modal').classList.remove('open');
-});
-document.getElementById('notify-submit').addEventListener('click',()=>{
-  document.getElementById('notify-modal').classList.remove('open');
-  document.getElementById('notify-email').value='';
-});
-</script>
 </body>
 </html>

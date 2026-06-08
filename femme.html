@@ -111,7 +111,25 @@
 </style>
 </head>
 <body>
-<canvas id="cursor-canvas" width="48" height="56"></canvas>
+
+<canvas id="cur" width="48" height="56" style="position:fixed;pointer-events:none;z-index:99999;image-rendering:pixelated;transform:translate(-50%,-50%);left:-100px;top:-100px;"></canvas>
+<script>
+(function(){
+var cv=document.getElementById("cur");
+var ctx=cv.getContext("2d");
+var G=[[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1,1,0],[0,0,1,0,0]];
+var C=[["#00FF9F","#FF00FF"],["#FF72C6","#00FFFF"],["#FFFF00","#00BFFF"],["#FF4DFF","#00FF9F"],["#FF6600","#00FF00"]];
+var ci=0;
+function draw(a,b){ctx.clearRect(0,0,48,56);for(var y=0;y<7;y++){for(var x=0;x<5;x++){if(!G[y][x])continue;ctx.fillStyle=(x+y)%2===0?a:b;ctx.shadowColor=a;ctx.shadowBlur=8;ctx.fillRect(x*8+4,y*8+2,7,7);}}ctx.shadowBlur=0;}
+draw(C[0][0],C[0][1]);
+document.addEventListener("mousemove",function(e){cv.style.left=e.clientX+"px";cv.style.top=e.clientY+"px";});
+setInterval(function(){ci=(ci+1)%5;draw(C[ci][0],C[ci][1]);},500);
+document.addEventListener("mousedown",function(){cv.style.transform="translate(-50%,-50%) scale(0.75)";});
+document.addEventListener("mouseup",function(){cv.style.transform="translate(-50%,-50%) scale(1)";});
+document.querySelectorAll("a,button,input,select").forEach(function(el){el.addEventListener("mouseenter",function(){draw("#fff","#00FF9F");});el.addEventListener("mouseleave",function(){draw(C[ci][0],C[ci][1]);});});
+})();
+</script>
+
 
 <div class="notify-modal" id="notify-modal">
   <div class="notify-box">
@@ -215,9 +233,9 @@
 <footer>
   <ul class="footer-links">
     <li><a href="index.html">Accueil</a></li>
-      <li><a href="clubs.html">Clubs</a></li>
     <li><a href="homme.html">Homme</a></li>
     <li><a href="femme.html">Femme</a></li>
+    <li><a href="clubs.html">Clubs</a></li>
     <li><a href="univers.html">Notre Histoire</a></li>
   </ul>
   <div class="footer-copy">© 2025 Under The Game</div>
@@ -228,39 +246,6 @@
   </ul>
 </footer>
 
-<script>
-const canvas=document.getElementById('cursor-canvas');
-const U_GRID=[[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1,1,0],[0,0,1,0,0]];
-const fluoColors=[['#00FF9F','#FF00FF'],['#FF72C6','#00FFFF'],['#FFFF00','#00BFFF'],['#FF4DFF','#00FF9F'],['#FF6600','#00FF00']];
-let colorIdx=0;
-function drawU(c1,c2){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,48,56);U_GRID.forEach((row,y)=>row.forEach((v,x)=>{if(!v)return;ctx.fillStyle=(x+y)%2===0?c1:c2;ctx.shadowColor=c1;ctx.shadowBlur=10;ctx.fillRect(x*8+4,y*8+2,7,7);}));ctx.shadowBlur=0;}
-drawU(...fluoColors[0]);
-document.addEventListener('mousemove',e=>{canvas.style.left=e.clientX+'px';canvas.style.top=e.clientY+'px';});
-setInterval(()=>{colorIdx=(colorIdx+1)%fluoColors.length;drawU(...fluoColors[colorIdx]);},500);
-document.addEventListener('mousedown',()=>{canvas.style.transform='translate(-50%,-50%) scale(0.75)';});
-document.addEventListener('mouseup',()=>{canvas.style.transform='translate(-50%,-50%) scale(1)';});
-document.querySelectorAll('a,button,label').forEach(el=>{
-  el.addEventListener('mouseenter',()=>drawU('#FFFFFF','#00FF9F'));
-  el.addEventListener('mouseleave',()=>drawU(...fluoColors[colorIdx]));
-});
-// Notify modal
-document.querySelectorAll('[data-notify]').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const name=btn.dataset.notify;
-    document.getElementById('modal-name').textContent=name;
-    document.getElementById('notify-modal').classList.add('open');
-  });
-});
-document.getElementById('notify-close')?.addEventListener('click',()=>{
-  document.getElementById('notify-modal').classList.remove('open');
-});
-document.getElementById('notify-submit')?.addEventListener('click',()=>{
-  const email=document.getElementById('notify-email').value;
-  if(email){
-    document.getElementById('notify-modal').classList.remove('open');
-    document.getElementById('notify-email').value='';
-  }
-});
-</script>
+
 </body>
 </html>
