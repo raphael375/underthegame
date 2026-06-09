@@ -261,7 +261,7 @@ document.querySelectorAll("a,button,input,select").forEach(function(el){el.addEv
     <p class="hero-phrase">Des rues aux terrains.<br>Du bruit au silence.<br>On n'attend pas le feu vert pour jouer.<br><strong>On joue.</strong></p>
     <div class="hero-actions">
       
-      <a href="#" class="btn-outline">Voir le film<span class="play-icon">▶</span></a>
+      <a href="#" onclick="openVideo();return false;" class="btn-outline">Voir le film<span class="play-icon">▶</span></a>
     </div>
   </div>
   <div class="sports-bar">
@@ -395,5 +395,26 @@ document.querySelectorAll("a,button,input,select").forEach(function(el){el.addEv
 </footer>
 
 
+
+<!-- MODAL VIDEO -->
+<div id="video-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;">
+  <div style="position:relative;width:90%;max-width:960px;">
+    <iframe id="video-iframe" width="100%" height="540" src="" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen style="border-radius:8px;"></iframe>
+    <button onclick="closeVideo()" style="position:absolute;top:-44px;right:0;background:transparent;border:none;color:white;font-size:28px;font-weight:300;font-family:Inter,sans-serif;">✕</button>
+  </div>
+</div>
+<script>
+function openVideo(){
+  document.getElementById("video-modal").style.display="flex";
+  document.getElementById("video-iframe").src="https://www.youtube.com/embed/EuIheU4KUY4?autoplay=1";
+}
+function closeVideo(){
+  document.getElementById("video-modal").style.display="none";
+  document.getElementById("video-iframe").src="";
+}
+document.getElementById("video-modal").addEventListener("click",function(e){
+  if(e.target===this) closeVideo();
+});
+</script>
 </body>
 </html>
