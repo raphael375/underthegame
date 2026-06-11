@@ -184,20 +184,10 @@
 </footer>
 
 <script>
-
-    if (res.ok) {
-      document.getElementById("modal").classList.remove("open");
-      document.getElementById("success").classList.add("open");
-      form.reset();
-    }
-  } catch(err) {
-    alert("Erreur envoi. Contactez raphael@wearewallace.online");
-  }
-});
-
-// CURSOR
-var cv = document.getElementById("cur");
-var ctx = cv.getContext("2d");
+(function(){
+var cv=document.getElementById("cur");
+if(!cv)return;
+var ctx=cv.getContext("2d");
 var G=[[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1,1,0],[0,0,1,0,0]];
 var C=[["#00FF9F","#FF00FF"],["#FF72C6","#00FFFF"],["#FFFF00","#00BFFF"],["#FF4DFF","#00FF9F"],["#FF6600","#00FF00"]];
 var ci=0;
@@ -211,6 +201,7 @@ document.querySelectorAll("a,button,select,input").forEach(function(el){
   el.addEventListener("mouseenter",function(){draw("#fff","#00FF9F");});
   el.addEventListener("mouseleave",function(){draw(C[ci][0],C[ci][1]);});
 });
+})();
 </script>
 </body>
 </html>
