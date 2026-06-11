@@ -106,77 +106,6 @@
 
 <canvas id="cur" width="48" height="56" style="position:fixed;pointer-events:none;z-index:99999;image-rendering:pixelated;transform:translate(-50%,-50%);left:-100px;top:-100px;"></canvas>
 
-<!-- MODALS -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <div class="modal-title">Commander — <em id="modal-product-name">Sweat FTBC</em></div>
-    <div class="modal-sub">Paiement à la livraison au club · <strong id="modal-price" style="color:white">40 €</strong></div>
-
-    <form id="order-form" action="https://formspree.io/f/mpqedjkq" method="POST">
-      <input type="hidden" name="produit" id="field-produit">
-      <input type="hidden" name="club" value="Falleron Touvois Basket Club">
-      <input type="hidden" name="prix" id="field-prix">
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Prénom *</label>
-          <input type="text" name="prenom" class="form-input" placeholder="Jules" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Nom *</label>
-          <input type="text" name="nom" class="form-input" placeholder="Martin" required>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email *</label>
-        <input type="email" name="email" class="form-input" placeholder="jules@email.com" required>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Téléphone</label>
-        <input type="tel" name="telephone" class="form-input" placeholder="06 12 34 56 78">
-      </div>
-      <div class="form-row">
-        <div class="form-group" id="taille-group">
-          <label class="form-label">Taille *</label>
-          <select name="taille" class="form-select" required>
-            <option value="">Choisir...</option>
-            <option value="XS">XS</option>
-            <option value="S">S</option>
-            <option value="M">M</option>
-            <option value="L">L</option>
-            <option value="XL">XL</option>
-            <option value="XXL">XXL</option>
-          </select>
-        </div>
-        <div class="form-group" id="numero-group">
-          <label class="form-label">Numéro (optionnel)</label>
-          <input type="text" name="numero" class="form-input" placeholder="Ex : 7">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Adresse *</label>
-        <input type="text" name="adresse" class="form-input" placeholder="123 rue du Sport, 44650 Falleron" required>
-      </div>
-      <div class="form-note">
-        💳 <strong>Paiement à la livraison.</strong> Votre commande sera remise au Falleron Touvois Basket Club. Le règlement s'effectue en main propre lors de la remise.
-      </div>
-      <div class="modal-actions">
-        <button type="submit" class="btn-submit">Valider ma commande →</button>
-        <button type="button" class="btn-cancel" id="modal-close">Annuler</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div class="success-overlay" id="success">
-  <div class="success-box">
-    <div class="success-icon">✅</div>
-    <div class="success-title">Commande <em>envoyée !</em></div>
-    <div class="success-text">On a bien reçu ta commande. Raphaël te contactera pour confirmer et organiser la remise au Falleron Touvois Basket Club.</div>
-    <a href="clubs.html" class="btn-green">Retour aux clubs</a>
-  </div>
-</div>
-
 <!-- NAV -->
 <nav>
   <a href="clubs.html" class="nav-back">← Clubs</a>
@@ -224,7 +153,7 @@
         <div class="product-name">Sweat Falleron Touvois BC</div>
         <div class="product-desc">Hoodie · Édition club exclusive · UTG × FTBC</div>
         <div class="product-price">40 € <span>livré au club</span></div>
-        <button class="btn-order" onclick="openModal('Sweat Falleron Touvois BC', '40 €', false)">Commander ce sweat →</button>
+        <a href="https://under-the-game.myshopify.com/products/sweat-capuche-utg-ftbc" target="_blank" class="btn-order">Acheter ce sweat →</a>
       </div>
     </div>
 
@@ -237,7 +166,7 @@
         <div class="product-name">T-shirt Falleron Touvois BC</div>
         <div class="product-desc">Tee · Édition club exclusive · UTG × FTBC</div>
         <div class="product-price">29 € <span>livré au club</span></div>
-        <button class="btn-order" onclick="openModal('T-shirt Falleron Touvois BC', '29 €', false)">Commander ce t-shirt →</button>
+        <a href="https://under-the-game.myshopify.com/products/t-shirt-boxy-utg" target="_blank" class="btn-order">Acheter ce t-shirt →</a>
       </div>
     </div>
 
@@ -255,32 +184,7 @@
 </footer>
 
 <script>
-function openModal(product, price, isCasquette) {
-  document.getElementById("modal-product-name").textContent = product;
-  document.getElementById("modal-price").textContent = price;
-  document.getElementById("field-produit").value = product;
-  document.getElementById("field-prix").value = price;
-  document.getElementById("numero-group").style.display = isCasquette ? "none" : "block";
-  if (isCasquette) {
-    document.getElementById("taille-group").style.display = "none";
-    document.querySelector("select[name=taille]").removeAttribute("required");
-  } else {
-    document.getElementById("taille-group").style.display = "block";
-    document.querySelector("select[name=taille]").setAttribute("required","");
-  }
-  document.getElementById("modal").classList.add("open");
-}
 
-document.getElementById("modal-close").addEventListener("click", function() {
-  document.getElementById("modal").classList.remove("open");
-});
-
-document.getElementById("order-form").addEventListener("submit", async function(e) {
-  e.preventDefault();
-  var form = e.target;
-  var data = new FormData(form);
-  try {
-    var res = await fetch(form.action, { method:"POST", body:data, headers:{"Accept":"application/json"} });
     if (res.ok) {
       document.getElementById("modal").classList.remove("open");
       document.getElementById("success").classList.add("open");
