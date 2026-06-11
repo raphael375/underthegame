@@ -254,14 +254,14 @@
 <canvas id="cur" width="48" height="56" style="position:fixed;pointer-events:none;z-index:99999;image-rendering:pixelated;transform:translate(-50%,-50%);left:-100px;top:-100px;"></canvas>
 <script>
 (function(){
-var cv=document.getElementById("cur");
+var cv=document.getElementById("cur"); if(!cv)return;
 var ctx=cv.getContext("2d");
 var G=[[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[1,1,0,1,1],[0,1,1,1,0],[0,0,1,0,0]];
 var C=[["#00FF9F","#FF00FF"],["#FF72C6","#00FFFF"],["#FFFF00","#00BFFF"],["#FF4DFF","#00FF9F"],["#FF6600","#00FF00"]];
 var ci=0;
 function draw(a,b){ctx.clearRect(0,0,48,56);for(var y=0;y<7;y++){for(var x=0;x<5;x++){if(!G[y][x])continue;ctx.fillStyle=(x+y)%2===0?a:b;ctx.shadowColor=a;ctx.shadowBlur=8;ctx.fillRect(x*8+4,y*8+2,7,7);}}ctx.shadowBlur=0;}
 draw(C[0][0],C[0][1]);
-document.addEventListener("mousemove",function(e){cv.style.left=e.clientX+"px";cv.style.top=e.clientY+"px";});
+document.addEventListener("mousemove",function(e){if(cv){cv.style.left=e.clientX+"px";cv.style.top=e.clientY+"px";}});
 setInterval(function(){ci=(ci+1)%5;draw(C[ci][0],C[ci][1]);},500);
 document.addEventListener("mousedown",function(){cv.style.transform="translate(-50%,-50%) scale(0.75)";});
 document.addEventListener("mouseup",function(){cv.style.transform="translate(-50%,-50%) scale(1)";});
@@ -315,13 +315,13 @@ document.querySelectorAll("a,button,input,select").forEach(function(el){el.addEv
       <div class="club-city">Legé · Loire-Atlantique</div>
       <div class="club-products">2 produits disponibles · Sweat + Casquette</div>
     </a>
-    <div class="club-card" style="opacity:0.5">
-      <span class="club-coming">Bientôt</span>
-      <div class="club-sport-badge">⚽ Football</div>
-      <div class="club-name-big">Votre Club</div>
-      <div class="club-city">Votre ville</div>
-      <div class="club-products">Collection en cours...</div>
-    </div>
+    <a href="club-falleron-ftbc.html" class="club-card club-card-active" style="border-color:rgba(45,140,62,0.4);background:rgba(45,140,62,0.08);">
+      <span class="club-active-badge" style="background:#2D8C3E;">Disponible</span>
+      <div class="club-sport-badge" style="background:rgba(45,140,62,0.2);color:#2D8C3E;">🏀 Basketball</div>
+      <div class="club-name-big">Falleron Touvois BC</div>
+      <div class="club-city">Falleron · Loire-Atlantique</div>
+      <div class="club-products">2 produits disponibles · Sweat + T-shirt</div>
+    </a>
     <div class="club-card" style="opacity:0.5">
       <span class="club-coming">Bientôt</span>
       <div class="club-sport-badge">🏀 Basketball</div>
@@ -359,7 +359,8 @@ document.querySelectorAll("a,button,input,select").forEach(function(el){el.addEv
 </footer>
 <script>
 var CLUBS = [
-  { name: "Lege HBC", sport: "Handball", city: "Lege", emoji: "🤾", url: "club-lege-hbc.html" }
+  { name: "Lege HBC", sport: "Handball", city: "Lege", emoji: "🤾", url: "club-lege-hbc.html" },
+  { name: "Falleron Touvois Basket Club", sport: "Basketball", city: "Falleron", emoji: "🏀", url: "club-falleron-ftbc.html" }
 ];
 
 var searchInput = document.getElementById("searchInput");
